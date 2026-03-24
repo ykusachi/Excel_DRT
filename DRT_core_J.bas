@@ -6,7 +6,7 @@ Option Explicit
 ' 1. KKフィルターの閾値 (%)
 Public Const KK_THRESHOLD As Double = 3#
 
-' 2. λスキャンの設定
+' 2. Lambda スキャンの設定
 Public Const LAMBDA_START_EXP As Double = 0#   ' 10^-1 から開始
 Public Const LAMBDA_END_EXP As Double = 10#    ' 10^-13 まで
 Public Const LAMBDA_STEP As Double = 0.2        ' ステップ幅
@@ -193,8 +193,8 @@ Sub RunDRT()
     ws.Cells(1, 14).Value = "Log(SolSum)"
     ws.Cells(1, 15).Value = "Freq_Grid(Hz)"
     
-    ' --- 7. λスキャン実行 ---
-    ' --- RunDRT 内の λスキャン実行部分 ---
+    ' --- 7. Lambda スキャン実行 ---
+    ' --- RunDRT 内の Lambdaスキャン実行部分 ---
     Dim nSteps As Long
     nSteps = Int((LAMBDA_END_EXP - LAMBDA_START_EXP) / LAMBDA_STEP) + 1
     
@@ -202,7 +202,7 @@ Sub RunDRT()
         Dim exponent As Double: exponent = LAMBDA_START_EXP + (k - 1) * LAMBDA_STEP
         lambda = 10 ^ (-exponent)
         
-        Application.StatusBar = "[" & ActiveSheet.Name & "] Analysing: λ=10^-" & _
+        Application.StatusBar = "[" & ActiveSheet.Name & "] Analysing: Lambda =10^-" & _
                                 Format(exponent, "0.00") & " (" & k & "/" & nSteps & ")"
         
     
@@ -210,9 +210,9 @@ Sub RunDRT()
 '        Dim exponent As Double: exponent = 1# + (k - 1) * 0.25
 '        lambda = 10 ^ (-exponent)
 '
-''        Application.StatusBar = "Analysing: λ=10^-" & Format(exponent, "0.00") & " (" & k & "/49)"
+''        Application.StatusBar = "Analysing: Lambda =10^-" & Format(exponent, "0.00") & " (" & k & "/49)"
 '        ' シート名を先頭に追加
-'        Application.StatusBar = "[" & ActiveSheet.Name & "] Analysing: λ=10^-" & _
+'        Application.StatusBar = "[" & ActiveSheet.Name & "] Analysing: Lambda =10^-" & _
 '                                Format(exponent, "0.00") & " (" & k & "/49)"
         
         DoEvents
@@ -372,7 +372,7 @@ Sub WriteSpectralResultShifted(ws, k, lam, expo, A, x, b, nV, nT, tG, msg As Str
     ws.Cells(k + 1, 12).Value = lam
     ws.Cells(k + 1, 13).Value = WorksheetFunction.Log10(rS + 1E-20)
     ws.Cells(k + 1, 14).Value = WorksheetFunction.Log10(sS + 1E-20)
-    ws.Cells(1, 15 + k).Value = "λ:10^-" & Format(expo, "0.00") & msg
+    ws.Cells(1, 15 + k).Value = "Lambda :10^-" & Format(expo, "0.00") & msg
     
     For i = 1 To nT
         If k = 1 Then
@@ -503,7 +503,7 @@ Dim ws As Worksheet
         dist = Sqr(normRes(i) ^ 2 + normSol(i) ^ 2)
         If dist < minDistance Then
             minDistance = dist
-            optIdx = i ' ここで「何番目のλか」が確定する
+            optIdx = i ' ここで「何番目のLambdaか」が確定する
         End If
     Next i
     
@@ -515,7 +515,7 @@ Dim ws As Worksheet
     
     ' 2. P列以降の「対応する列」を特定して着色
     ' RunDRT側のロジック「targetCol = 15 + k」に合わせる
-    ' optIdx=2(1つ目のλ)なら15+1=16列目(P列)
+    ' optIdx=2(1つ目のLambda)なら15+1=16列目(P列)
     targetCol = 15 + (optIdx - 1)
     
     If targetCol <= lastCol Then
@@ -529,7 +529,7 @@ Dim ws As Worksheet
     End If
     
 '    MsgBox "判定完了。" & vbCrLf & _
-'           "Optimal λ: " & ws.Cells(optIdx, 12).Value & vbCrLf & _
+'           "Optimal Lambda: " & ws.Cells(optIdx, 12).Value & vbCrLf & _
 '           "着色列: " & Split(ws.Cells(1, targetCol).Address, "$")(1)
 End Sub
 

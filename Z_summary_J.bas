@@ -1,4 +1,4 @@
-Attribute VB_Name = "Module1"
+﻿Attribute VB_Name = "Module1"
 Option Explicit
 
 'WindowsとMacで切り分けるプロシージャー
@@ -40,15 +40,17 @@ Function Select_File_Or_Files_Windows()
     ChDrive MyPath
     ChDir MyPath
 
-    ' Open GetOpenFilename with the file filters.
+    ' Open the file picker with Z filters and a custom title
     Fname = Application.GetOpenFilename( _
-            FileFilter:="Excel File, *.xls*", _
+            FileFilter:="Z Files (*.z), *.z", _
             Title:="Select a file or files", _
             MultiSelect:=True)
 
-    ' Change drive/directory back to SaveDriveDir.
+    ' Restore the original drive and directory
+    On Error Resume Next
     ChDrive SaveDriveDir
     ChDir SaveDriveDir
+    On Error GoTo 0
 
     ' 選択したファイルを戻り値に設定する
     Select_File_Or_Files_Windows = Fname
@@ -108,20 +110,26 @@ Function GetPathInfo(ByVal FullPath As String) As Variant
     Dim LastSeparatorPos As Long
     Dim DirPath As String
     Dim FileName As String
+
+
+    Dim i As Long
+    Dim CheckChars As Variant
     
-    ' OSによってパス区切り文字を判断
-    If Application.OperatingSystem Like "*Mac*" Then
-        ' Mac OSでは通常、ファイルパスにコロン (:) またはスラッシュ (/) が使われる
-        ' ただし、MacScriptの出力がコロン区切りで、後のReplaceでスラッシュ区切りになるため、
-        ' スラッシュを優先してチェックする。
-        PathSeparator = IIf(InStrRev(FullPath, "/") > 0, "/", ":")
-    Else
-        ' Windowsはバックスラッシュ ()
-        PathSeparator = ""
-    End If
+    ' List of separaton characters キャラクターコードで判断
+    ' Chr(92) = \ , Chr(165) = ¥ , Chr(47) = /
+    CheckChars = Array("\", "/", Chr(92), Chr(165), Chr(47))
     
-    ' 最後の区切り文字の位置を取得
-    LastSeparatorPos = InStrRev(FullPath, PathSeparator)
+    LastSeparatorPos = 0
+    
+    ' 
+    For i = LBound(CheckChars) To UBound(CheckChars)
+        Dim pos As Long
+        pos = InStrRev(FullPath, CheckChars(i))
+        If pos > LastSeparatorPos Then
+            LastSeparatorPos = pos
+        End If
+    Next i
+    
     
     If LastSeparatorPos > 0 Then
         ' ディレクトリのパス: 最後の区切り文字まで
