@@ -1,4 +1,4 @@
-Attribute VB_Name = "Module21"
+ÔªøAttribute VB_Name = "Module21"
 Option Explicit
 ' ============================================================
 ' GLOBAL SETTINGS (Modify these values to adjust analysis)
@@ -8,7 +8,7 @@ Option Explicit
 ' Points with residuals exceeding this percentage will be excluded.
 Public Const KK_THRESHOLD As Double = 3#
 
-' 2. Lambda (É…) Scan Settings
+' 2. Lambda Scan Settings
 ' Scans regularization parameter from 10^(-START) to 10^(-END).
 Public Const LAMBDA_START_EXP As Double = 0#   ' Start exponent (e.g., 0 for 10^0)
 Public Const LAMBDA_END_EXP As Double = 10#    ' End exponent (e.g., 10 for 10^-10)
@@ -249,12 +249,12 @@ Sub RunDRT()
 
     ' --- 6. Set Summary Headers ---
     ws.Cells(1, 11).Value = "Flag"
-    ws.Cells(1, 12).Value = "Lambda (É…)"
+    ws.Cells(1, 12).Value = "Lambda"
     ws.Cells(1, 13).Value = "Log(ResidualSum)"
     ws.Cells(1, 14).Value = "Log(SolutionSum)"
     ws.Cells(1, 15).Value = "Freq_Grid(Hz)"
     
-    ' --- 7. Execute Lambda (É…) Scan ---
+    ' --- 7. Execute Lambda Scan ---
     Dim nSteps As Long
     nSteps = Int((LAMBDA_END_EXP - LAMBDA_START_EXP) / LAMBDA_STEP) + 1
     
@@ -262,7 +262,7 @@ Sub RunDRT()
         Dim exponent As Double: exponent = LAMBDA_START_EXP + (k - 1) * LAMBDA_STEP
         lambda = 10 ^ (-exponent)
         
-        Application.StatusBar = "[" & ActiveSheet.Name & "] Analyzing: É… = 10^-" & _
+        Application.StatusBar = "[" & ActiveSheet.Name & "] Analyzing: Lambda = 10^-" & _
                                 Format(exponent, "0.00") & " (" & k & "/" & nSteps & ")"
         
         DoEvents
@@ -512,7 +512,7 @@ Sub WriteSpectralResultShifted(ws, k, lam, expo, A, x, b, nV, nT, tG, msg As Str
     ws.Cells(k + 1, 14).Value = WorksheetFunction.Log10(solSumSq + 1E-20)
     
     ' Set Column Header for the current Lambda step
-    ws.Cells(1, 15 + k).Value = "É…:10^-" & Format(expo, "0.00") & msg
+    ws.Cells(1, 15 + k).Value = "Lambda:10^-" & Format(expo, "0.00") & msg
     
     ' Output Frequency Grid and DRT Spectrum g(tau)
     For i = 1 To nT
